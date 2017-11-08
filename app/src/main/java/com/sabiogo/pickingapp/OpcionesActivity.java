@@ -87,19 +87,21 @@ public class OpcionesActivity extends Activity {
 
     }
     private void logout(){
-        RequestQueue queue = Volley.newRequestQueue(this);
+        RequestQueue queue = Volley.newRequestQueue(OpcionesActivity.this);
         try{
-            StringRequest stringRequest = new StringRequest(Request.Method.GET,  UserConfigDAO.getUserConfig(OpcionesActivity.this).getApiUrl() + ":3000" + "/api/session/logout/" + id_usuario,
+            StringRequest stringRequest = new StringRequest(Request.Method.GET,   "http://" + UserConfigDAO.getUserConfig(OpcionesActivity.this).getApiUrl() + "/api/session/logout/" + id_usuario,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            //Obtenemos el response
-                            Log.d(TAG, "logout: usuario encontrado para desloguear.");
-                            Log.d(TAG, "logout: borrando id usuario de las preferencias.");
-                            SharedPreferences preferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.clear();
-                            editor.commit();
+                            if(response.toString().equals("true")) {
+                                //Obtenemos el response
+                                Log.d(TAG, "logout: usuario encontrado para desloguear.");
+                                Log.d(TAG, "logout: borrando id usuario de las preferencias.");
+                                SharedPreferences preferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.clear();
+                                editor.commit();
+                            }
                         }
                     },
                     new Response.ErrorListener() {
@@ -110,10 +112,9 @@ public class OpcionesActivity extends Activity {
                         }
                     });
             // Add the request to the RequestQueue.
-            WSHelper.getInstance(this).addToRequestQueue(stringRequest);
+            queue.add(stringRequest);
             setResult(99);
-            Intent setIntent = new Intent(getApplicationContext(),MainActivity.class);
-            startActivity(setIntent);
+            finish();
         }catch (Exception ex){
             throw ex;
         }
@@ -128,7 +129,7 @@ public class OpcionesActivity extends Activity {
     public void getCodigosBarra(){
         //Realizamos la consulta al web service para obtener el listado de codigos de barra
         JsonArrayRequest jsObjRequest = new JsonArrayRequest
-                (Request.Method.GET, "http://" + UserConfigDAO.getUserConfig(OpcionesActivity.this).getApiUrl() + ":3000" + "/api/codigos/get/" + id_usuario, null, new Response.Listener<JSONArray>() {
+                (Request.Method.GET, "http://" + UserConfigDAO.getUserConfig(OpcionesActivity.this).getApiUrl() + "/api/codigos/get/" + id_usuario, null, new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         CodigoBarraDAO.insertCodigosBarra(OpcionesActivity.this, CodigoBarraMapper.mapList(response));
