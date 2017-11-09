@@ -27,7 +27,7 @@ public class ConfigActivity extends AppCompatActivity {
         this.btnGuardar = (Button) findViewById(R.id.btnGuardar);
         this.btnCancelar = (Button) findViewById(R.id.btnCancelar);
 
-        this.txtApiUri.setText("192.168.0.101");
+        this.txtApiUri.setText("192.168.1.142");
 
         //Definimos listener para btnGuardar
         this.btnGuardar.setOnClickListener(new View.OnClickListener() {

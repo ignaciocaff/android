@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -301,28 +302,38 @@ public class StockActivity extends Activity {
             /*jsonBody = new JSONObject();
             jsonBody.put("", comprobante);*/
 
-            String url = "http://" + UserConfigDAO.getUserConfig( StockActivity.this).getApiUrl() + ":3000" + getString(R.string.api_ingresarStock) + id_usuario;
+            String url = "http://" + UserConfigDAO.getUserConfig( getApplicationContext()).getApiUrl() + getString(R.string.api_ingresarStock) + id_usuario;
 
 /*            Map<String, String> postParam= new HashMap<String, String>();
             postParam.put("comprobante", comprobante.toString());*/
 
             HashMap<String, String> headers = new HashMap<String, String>();
-            headers.put("Content-Type", "application/json");
-
-            GsonRequest request = new GsonRequest(url,comprobante,Comprobante.class,headers, new Response.Listener<JSONObject>() {
+            //headers.put("Content-Type","application/json");
+            GsonRequest request = new GsonRequest(url,comprobante,Comprobante.class,headers, new Response.Listener<String>() {
 
                 @Override
-                public void onResponse(JSONObject response) {
-                    Log.d(TAG, response.toString());
+                public void onResponse(String response) {
+                    Log.d(TAG, response);
+                    borrarRegistros();
+                    Toast.makeText(getApplicationContext(), "Grabado correctamente", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), OpcionesActivity.class);
+                    startActivityForResult(intent,0);
                 }
             }, new Response.ErrorListener() {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
+                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                 }
-            });
+            }){ @Override
+                public String getBodyContentType(){
+                return "application/json";
+            }
 
+            };
+            request.setRetryPolicy(new DefaultRetryPolicy(50000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            ));
            /* JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(postParam),
                     new Response.Listener<JSONObject>() {
 

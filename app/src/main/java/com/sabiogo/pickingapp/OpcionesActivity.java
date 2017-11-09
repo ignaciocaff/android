@@ -89,6 +89,10 @@ public class OpcionesActivity extends Activity {
     private void logout(){
         RequestQueue queue = Volley.newRequestQueue(OpcionesActivity.this);
         try{
+            SharedPreferences preferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.remove(ID_USUARIO);
+            editor.commit();
             StringRequest stringRequest = new StringRequest(Request.Method.GET,   "http://" + UserConfigDAO.getUserConfig(OpcionesActivity.this).getApiUrl() + "/api/session/logout/" + id_usuario,
                     new Response.Listener<String>() {
                         @Override

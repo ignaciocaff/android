@@ -132,12 +132,12 @@ public class MainActivity extends AppCompatActivity {
                 progressDialog.show();
 
                 // Solicitamos un request de tipo string a la url provista por la configuracion
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://" +  UserConfigDAO.getUserConfig(MainActivity.this).getApiUrl() + ":3000" + "/api/session/login/" + id_usuario,
+                StringRequest stringRequest = new StringRequest(Request.Method.GET,  "http://" + UserConfigDAO.getUserConfig(getApplicationContext()).getApiUrl() + "/api/session/login/" + id_usuario,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
                                 //Obtenemos el response
-                                if(response.toString().equals("true")){
+                                if(response.equals("true")){
                                     Log.d(TAG, "login: acceso concedido.");
                                     Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                                     savePreferences();
@@ -161,12 +161,14 @@ public class MainActivity extends AppCompatActivity {
                 // Add the request to the RequestQueue.
                 WSHelper.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
 
+
                 new android.os.Handler().postDelayed(
                         new Runnable() {
                             public void run() {
                                 progressDialog.dismiss();
                             }
                         }, 3000);
+
 
             } catch (Exception ex) {
                 throw ex;
@@ -176,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     //VER SI onPause y onResume HACE FALTA EN LA MAIN ACTIVITY O EN LAS SIGUIENTES!
+/*
     @Override
     protected void onPause() {
         super.onPause();
@@ -189,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onResume: se maximiza la aplicación.");
         loadPreferences();
     }
+*/
 
     private void savePreferences(){
         Log.d(TAG,"savePreferences: se almacena el id del usuario como 'variable de sesion'.");
